@@ -1,11 +1,7 @@
 defmodule Hub88WalletWeb.TransactionController do
   use Hub88WalletWeb, :controller
-  alias Hub88Wallet.Users.{User, Users}
-  alias Hub88Wallet.Transactions.{Transaction, Transactions}
-  alias Ecto.Multi
-  alias Ecto.Repo
-  alias Hub88Wallet.Repo
-
+  alias Hub88Wallet.Users.Users
+  alias Hub88Wallet.Transactions.Transactions
 
   def create_win(conn, %{
     "user" => username,
@@ -30,7 +26,18 @@ defmodule Hub88WalletWeb.TransactionController do
         reference_transaction: reference_transaction
       }
 
-      create_transaction(user, transaction_data, conn)
+      Transactions.create_transaction(user, transaction_data)
+        |> case do
+          {:ok, %{user: updated_user}} ->
+            json(conn, %{
+              status: "RS_OK",
+              user: updated_user.user,
+              balance: Decimal.to_string(updated_user.balance)
+            })
+
+          {:error, _operation, _reason, _changes} ->
+            json(conn, %{status: "RS_UNKNOWN_ERROR"})
+        end
     else
       {:error, :invalid_user} ->
         json(conn, %{status: "RS_ERROR_INVALID_USER"})
@@ -75,7 +82,18 @@ defmodule Hub88WalletWeb.TransactionController do
         transaction_type: "bet"
       }
 
-      create_transaction(user, transaction_data, conn)
+      Transactions.create_transaction(user, transaction_data)
+        |> case do
+          {:ok, %{user: updated_user}} ->
+            json(conn, %{
+              status: "RS_OK",
+              user: updated_user.user,
+              balance: Decimal.to_string(updated_user.balance)
+            })
+
+          {:error, _operation, _reason, _changes} ->
+            json(conn, %{status: "RS_UNKNOWN_ERROR"})
+        end
     else
       {:error, :invalid_user} ->
         json(conn, %{status: "RS_ERROR_INVALID_USER"})
@@ -130,38 +148,5 @@ defmodule Hub88WalletWeb.TransactionController do
       transaction when transaction.is_closed == false -> {:ok, transaction}
       _closed_transaction -> {:error, :reference_transaction_closed}
     end
-  end
-
-  defp create_transaction(user, transaction_data, conn) do
-    new_balance =
-      case transaction_data.transaction_type do
-        "bet" -> Decimal.sub(user.balance, transaction_data.amount)
-        "win" -> Decimal.add(user.balance, transaction_data.amount)
-      end
-
-    multi =
-      Multi.new()
-      |> Multi.insert(:transaction, Transaction.changeset(%Transaction{}, transaction_data))
-      |> Multi.update(:user, User.changeset(user, %{balance: new_balance}))
-
-    multi =
-      case transaction_data.transaction_type do
-        "win" -> multi |> Multi.update(:bet_transaction,  Transaction.changeset(transaction_data.reference_transaction, %{is_closed: true}))
-        "bet" -> multi
-      end
-
-    multi
-      |> Repo.transaction()
-      |> case do
-        {:ok, %{user: updated_user}} ->
-          json(conn, %{
-            status: "RS_OK",
-            user: updated_user.user,
-            balance: Decimal.to_string(updated_user.balance)
-          })
-
-        {:error, _operation, _reason, _changes} ->
-          json(conn, %{status: "RS_UNKNOWN_ERROR"})
-      end
   end
 end

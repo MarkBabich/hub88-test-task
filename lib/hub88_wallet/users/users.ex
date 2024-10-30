@@ -8,9 +8,7 @@ defmodule Hub88Wallet.Users.Users do
   def get_or_create_user_by_name(user_name) do
     case Repo.get_by(User, user: user_name) do
       nil ->
-        %User{}
-        |> User.changeset(%{user: user_name, balance: @default_balance, currency: @default_currency})
-        |> Repo.insert()
+        create_user(user_name)
 
       user ->
         {:ok, user}
@@ -19,5 +17,17 @@ defmodule Hub88Wallet.Users.Users do
 
   def get_user_by_name(user_name) do
     Repo.get_by(User, user: user_name)
+  end
+
+  def create_user(user_name) do
+    case Repo.get_by(User, user: user_name) do
+      nil ->
+        %User{}
+          |> User.changeset(%{user: user_name, balance: @default_balance, currency: @default_currency})
+          |> Repo.insert()
+
+      user ->
+        {:error, user}
+    end
   end
 end
