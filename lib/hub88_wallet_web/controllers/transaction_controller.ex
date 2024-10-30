@@ -17,7 +17,7 @@ defmodule Hub88WalletWeb.TransactionController do
   with {:ok, user} <- validate_user(username),
       :ok <- validate_currency(currency),
       :ok <- validate_unique_transaction(transaction_uuid),
-      {:ok, reference_transaction} <- validate_reference_transaction(reference_transaction_uuid) do
+      {:ok, reference_transaction} <- validate_reference_transaction(reference_transaction_uuid, user.id) do
 
       transaction_data = %{
         user_id: user.id,
@@ -98,7 +98,6 @@ defmodule Hub88WalletWeb.TransactionController do
     json(conn, %{status: "RS_ERROR_WRONG_SYNTAX"})
   end
 
-# Перевірка користувача
   defp validate_user(username) do
     case Users.get_user_by_name(username) do
       nil -> {:error, :invalid_user}
@@ -106,11 +105,9 @@ defmodule Hub88WalletWeb.TransactionController do
     end
   end
 
-# Перевірка валюти
   defp validate_currency("EUR"), do: :ok
   defp validate_currency(_), do: {:error, :wrong_currency}
 
-# Перевірка балансу користувача
   defp validate_balance(%{balance: balance}, amount) do
     if Decimal.compare(balance, Decimal.new(amount)) != :lt do
       :ok
@@ -119,7 +116,6 @@ defmodule Hub88WalletWeb.TransactionController do
     end
   end
 
-# Перевірка унікальності UUID транзакції
   defp validate_unique_transaction(transaction_uuid) do
     case Transactions.get_transaction_by_uuid(transaction_uuid) do
       nil -> :ok
@@ -127,15 +123,15 @@ defmodule Hub88WalletWeb.TransactionController do
     end
   end
 
-  defp validate_reference_transaction(reference_transaction_uuid) do
+  defp validate_reference_transaction(reference_transaction_uuid, user_id) do
     case Transactions.get_transaction_by_uuid(reference_transaction_uuid) do
       nil -> {:error, :reference_transaction_does_not_exist}
+      transaction when transaction.user_id !== user_id -> {:error, :reference_transaction_does_not_exist}
       transaction when transaction.is_closed == false -> {:ok, transaction}
       _closed_transaction -> {:error, :reference_transaction_closed}
     end
   end
 
-# Створення транзакції
   defp create_transaction(user, transaction_data, conn) do
     new_balance =
       case transaction_data.transaction_type do
@@ -153,7 +149,6 @@ defmodule Hub88WalletWeb.TransactionController do
         "win" -> multi |> Multi.update(:bet_transaction,  Transaction.changeset(transaction_data.reference_transaction, %{is_closed: true}))
         "bet" -> multi
       end
-
 
     multi
       |> Repo.transaction()
