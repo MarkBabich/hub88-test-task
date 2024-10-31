@@ -57,6 +57,6 @@ The implementation covers specific endpoints according to the requirements outli
     "user": "username",
     "amount": "500.00",
     "currency": "EUR",
-    "transaction_uuid": "ac783666-ef15-46b2-a0fe-e9717f20f1r3",
-    "reference_uuid": "ef783666-ef15-46b2-a0fe-e9717f20f1e6"
+    "transaction_uuid": "a3b7a722-3d59-40ca-8015-0c6c3df99f45",
+    "reference_transaction_uuid": "ef783666-ef15-46b2-a0fe-e9717f20f1e6"
   }
