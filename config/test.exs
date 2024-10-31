@@ -9,6 +9,7 @@ config :hub88_wallet, Hub88Wallet.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
+  port: 5432,
   database: "hub88_wallet_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: System.schedulers_online() * 2

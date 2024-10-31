@@ -7,6 +7,7 @@ config :hub88_wallet, Hub88Wallet.Repo,
   hostname: "localhost",
   database: "hub88_wallet_dev",
   stacktrace: true,
+  port: 5433,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
