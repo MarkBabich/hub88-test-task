@@ -9,7 +9,7 @@ defmodule Hub88Wallet.Users.UsersTest do
       user_name = "new_user"
       assert {:ok, user} = Users.get_or_create_user_by_name(user_name)
       assert user.user == user_name
-      assert user.balance == Decimal.new("1000.00")
+      assert user.balance == 1000 * 100000
       assert user.currency == "EUR"
     end
 
@@ -40,7 +40,7 @@ defmodule Hub88Wallet.Users.UsersTest do
       user_name = "new_user"
       assert {:ok, user} = Users.create_user(user_name)
       assert user.user == user_name
-      assert user.balance == Decimal.new("1000.00")
+      assert user.balance == 1000 * 100000
       assert user.currency == "EUR"
     end
 

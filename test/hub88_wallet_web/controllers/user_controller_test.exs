@@ -16,7 +16,7 @@ defmodule Hub88WalletWeb.UserControllerTest do
       assert json_response(conn, 200) == %{
         "status" => "RS_OK",
         "user" => user.user,
-        "balance" => Decimal.to_string(user.balance),
+        "balance" => user.balance,
         "currency" => user.currency
       }
     end
@@ -26,7 +26,7 @@ defmodule Hub88WalletWeb.UserControllerTest do
 
       conn = post(conn, ~p"/user/balance", params)
 
-      assert json_response(conn, 200) == %{"status" => "RS_OK", "user" => "non_existent_user", "balance" => "1000.00", "currency" => "EUR"}
+      assert json_response(conn, 200) == %{"status" => "RS_OK", "user" => "non_existent_user", "balance" => 100000000, "currency" => "EUR"}
     end
 
     test "balance retrieval with incorrect syntax", %{conn: conn} do

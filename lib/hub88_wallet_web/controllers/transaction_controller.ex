@@ -17,7 +17,7 @@ defmodule Hub88WalletWeb.TransactionController do
 
       transaction_data = %{
         user_id: user.id,
-        amount: Decimal.new(amount),
+        amount: amount,
         currency: currency,
         transaction_uuid: transaction_uuid,
         reference_transaction_uuid: reference_transaction_uuid,
@@ -32,7 +32,7 @@ defmodule Hub88WalletWeb.TransactionController do
             json(conn, %{
               status: "RS_OK",
               user: updated_user.user,
-              balance: Decimal.to_string(updated_user.balance)
+              balance: updated_user.balance
             })
 
           {:error, _operation, _reason, _changes} ->
@@ -76,7 +76,7 @@ defmodule Hub88WalletWeb.TransactionController do
 
       transaction_data = %{
         user_id: user.id,
-        amount: Decimal.new(amount),
+        amount: amount,
         currency: currency,
         transaction_uuid: transaction_uuid,
         transaction_type: "bet"
@@ -88,7 +88,7 @@ defmodule Hub88WalletWeb.TransactionController do
             json(conn, %{
               status: "RS_OK",
               user: updated_user.user,
-              balance: Decimal.to_string(updated_user.balance)
+              balance: updated_user.balance
             })
 
           {:error, _operation, _reason, _changes} ->
@@ -127,7 +127,7 @@ defmodule Hub88WalletWeb.TransactionController do
   defp validate_currency(_), do: {:error, :wrong_currency}
 
   defp validate_balance(%{balance: balance}, amount) do
-    if Decimal.compare(balance, Decimal.new(amount)) != :lt do
+    if balance >= amount do
       :ok
     else
       {:error, :not_enough_money}

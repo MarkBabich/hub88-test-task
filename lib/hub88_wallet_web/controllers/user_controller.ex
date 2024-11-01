@@ -5,7 +5,7 @@ defmodule Hub88WalletWeb.UserController do
   def balance(conn, %{"user" => user_name}) when is_binary(user_name) do
     case Users.get_or_create_user_by_name(user_name) do
       {:ok, user} ->
-        json(conn, %{user: user.user, status: "RS_OK", balance: Decimal.to_string(user.balance), currency: user.currency})
+        json(conn, %{user: user.user, status: "RS_OK", balance: user.balance, currency: user.currency})
 
       {:error, _changeset} ->
         conn

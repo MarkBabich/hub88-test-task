@@ -4,7 +4,7 @@ defmodule Hub88Wallet.Users.User do
 
   schema "users" do
     field :user, :string
-    field :balance, :decimal, default: Decimal.new("1000.00")
+    field :balance, :integer, default: 1000 * 100000
     field :currency, :string, default: "EUR"
 
     has_many :transactions, Hub88Wallet.Transactions.Transaction

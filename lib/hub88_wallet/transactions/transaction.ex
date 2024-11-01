@@ -5,7 +5,7 @@ defmodule Hub88Wallet.Transactions.Transaction do
   schema "transactions" do
     field :transaction_uuid, Ecto.UUID
     field :currency, :string
-    field :amount, :decimal
+    field :amount, :integer
     field :transaction_type, :string
     field :reference_transaction_uuid, Ecto.UUID
     field :is_closed, :boolean, default: false

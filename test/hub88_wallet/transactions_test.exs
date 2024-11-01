@@ -21,7 +21,7 @@ defmodule Hub88Wallet.Transactions.TransactionsTest do
       transaction_uuid = UUID.uuid4()
       transaction_data = %{
         user_id: user.id,
-        amount: Decimal.new("200.00"),
+        amount: 20000000,
         transaction_uuid: transaction_uuid,
         currency: "EUR",
         transaction_type: "bet"
@@ -39,7 +39,7 @@ defmodule Hub88Wallet.Transactions.TransactionsTest do
 
       transaction_data = %{
         user_id: user.id,
-        amount: Decimal.new("50.00"),
+        amount: 5000000,
         transaction_uuid: UUID.uuid4(),
         currency: "EUR",
         transaction_type: "bet"
@@ -48,7 +48,7 @@ defmodule Hub88Wallet.Transactions.TransactionsTest do
       {:ok, _transaction} = Transactions.create_transaction(user, transaction_data)
       updated_user = Repo.get!(Hub88Wallet.Users.User, user.id)
 
-      assert updated_user.balance == Decimal.sub(initial_balance, transaction_data.amount)
+      assert updated_user.balance == initial_balance - transaction_data.amount
     end
 
     test "creates a win transaction and updates user balance", %{user: user} do
@@ -57,7 +57,7 @@ defmodule Hub88Wallet.Transactions.TransactionsTest do
 
       bet_transaction_data = %{
         user_id: user.id,
-        amount: Decimal.new("10.00"),
+        amount: 1000000,
         transaction_uuid: bet_transaction_uuid,
         currency: "EUR",
         transaction_type: "bet"
@@ -67,7 +67,7 @@ defmodule Hub88Wallet.Transactions.TransactionsTest do
 
       transaction_data = %{
         user_id: user.id,
-        amount: Decimal.new("50.00"),
+        amount: 5000000,
         transaction_uuid: UUID.uuid4(),
         reference_transaction_uuid: bet_transaction_uuid,
         reference_transaction: bet_transaction,
@@ -78,14 +78,14 @@ defmodule Hub88Wallet.Transactions.TransactionsTest do
 
       {:ok, %{user: updated_user}} = Transactions.create_transaction(user, transaction_data)
 
-      assert updated_user.balance == Decimal.add(initial_balance, transaction_data.amount)
+      assert updated_user.balance == initial_balance + transaction_data.amount
     end
 
     test "closes the corresponding bet transaction when a win transaction is created", %{user: user} do
       bet_uuid = UUID.uuid4()
       bet_data = %{
         user_id: user.id,
-        amount: Decimal.new("50.00"),
+        amount: 5000000,
         transaction_uuid: bet_uuid,
         currency: "EUR",
         transaction_type: "bet"
@@ -96,7 +96,7 @@ defmodule Hub88Wallet.Transactions.TransactionsTest do
       win_uuid = UUID.uuid4()
       win_data = %{
         user_id: user.id,
-        amount: Decimal.new("100.00"),
+        amount: 10000000,
         transaction_uuid: win_uuid,
         currency: "EUR",
         transaction_type: "win",

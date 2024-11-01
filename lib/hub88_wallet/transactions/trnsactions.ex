@@ -13,8 +13,8 @@ defmodule Hub88Wallet.Transactions.Transactions do
   def create_transaction(user, transaction_data) do
     new_balance =
       case transaction_data.transaction_type do
-        "bet" -> Decimal.sub(user.balance, transaction_data.amount)
-        "win" -> Decimal.add(user.balance, transaction_data.amount)
+        "bet" -> user.balance - transaction_data.amount
+        "win" -> user.balance + transaction_data.amount
       end
 
     multi =

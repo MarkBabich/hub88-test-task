@@ -17,7 +17,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
       params = %{
         "user" => user.user,
         "transaction_uuid" => transaction_uuid,
-        "amount" => "200.00",
+        "amount" => 20000000,
         "currency" => "EUR"
       }
 
@@ -26,7 +26,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
       assert json_response(conn, 200) == %{
         "status" => "RS_OK",
         "user" => user.user,
-        "balance" => "800.00"
+        "balance" => 80000000
       }
     end
 
@@ -36,7 +36,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
       params = %{
         "user" => user.user,
         "transaction_uuid" => transaction_uuid,
-        "amount" => "2000.00",
+        "amount" => 200000000,
         "currency" => "EUR"
       }
 
@@ -51,7 +51,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
       params = %{
         "user" => user.user,
         "transaction_uuid" => transaction_uuid,
-        "amount" => "100.00",
+        "amount" => 10000000,
         "currency" => "USD"
       }
 
@@ -65,7 +65,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
 
       transaction_data = %{
         user_id: user.id,
-        amount: Decimal.new("200.00"),
+        amount: 20000000,
         transaction_uuid: transaction_uuid,
         currency: "EUR",
         transaction_type: "bet"
@@ -76,7 +76,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
       params = %{
         "user" => user.user,
         "transaction_uuid" => transaction_uuid,
-        "amount" => "100.00",
+        "amount" => 10000000,
         "currency" => "EUR"
       }
 
@@ -103,7 +103,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
 
       transaction_data = %{
         user_id: user.id,
-        amount: Decimal.new("200.00"),
+        amount: 20000000,
         transaction_uuid: transaction_uuid,
         currency: "EUR",
         transaction_type: "bet"
@@ -115,7 +115,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
         "user" => user.user,
         "transaction_uuid" => transaction_uuid_2,
         "reference_transaction_uuid" => transaction_uuid,
-        "amount" => "300.00",
+        "amount" => 30000000,
         "currency" => "EUR"
       }
 
@@ -124,7 +124,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
       assert json_response(conn, 200) == %{
         "status" => "RS_OK",
         "user" => user.user,
-        "balance" => "1100.00"
+        "balance" => 110000000
       }
     end
 
@@ -136,7 +136,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
         "user" => user.user,
         "transaction_uuid" => transaction_uuid,
         "reference_transaction_uuid" => non_existent_transaction_uuid,
-        "amount" => "300.00",
+        "amount" => 30000000,
         "currency" => "EUR"
       }
 
@@ -151,7 +151,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
 
       transaction_data = %{
         user_id: user.id,
-        amount: Decimal.new("200.00"),
+        amount: 20000000,
         transaction_uuid: transaction_uuid,
         currency: "EUR",
         transaction_type: "bet",
@@ -164,7 +164,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
         "user" => user.user,
         "transaction_uuid" => transaction_uuid_2,
         "reference_transaction_uuid" => transaction_uuid,
-        "amount" => "300.00",
+        "amount" => 30000000,
         "currency" => "EUR"
       }
 
@@ -181,7 +181,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
 
       transaction_data = %{
         user_id: another_user.id,
-        amount: Decimal.new("200.00"),
+        amount: 20000000,
         transaction_uuid: transaction_uuid,
         currency: "EUR",
         transaction_type: "bet",
@@ -193,7 +193,7 @@ defmodule Hub88WalletWeb.TransactionControllerTest do
         "user" => user.user,
         "transaction_uuid" => transaction_uuid_2,
         "reference_transaction_uuid" => another_bet.transaction_uuid,
-        "amount" => "300.00",
+        "amount" => 30000000,
         "currency" => "EUR"
       }
 

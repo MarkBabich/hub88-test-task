@@ -2,7 +2,7 @@ defmodule Hub88Wallet.Users.Users do
   alias Hub88Wallet.Repo
   alias Hub88Wallet.Users.User
 
-  @default_balance Decimal.new("1000")
+  @default_balance 1000 * 100000
   @default_currency "EUR"
 
   def get_or_create_user_by_name(user_name) do
