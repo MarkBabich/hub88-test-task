@@ -12,7 +12,7 @@ defmodule Hub88WalletWeb.TransactionController do
   }) do
   with {:ok, user} <- validate_user(username),
       :ok <- validate_currency(currency),
-      :ok <- validate_unique_transaction(transaction_uuid),
+      :ok <- validate_unique_transaction(transaction_uuid, amount),
       {:ok, reference_transaction} <- validate_reference_transaction(reference_transaction_uuid, user.id) do
 
       transaction_data = %{
@@ -39,6 +39,13 @@ defmodule Hub88WalletWeb.TransactionController do
             json(conn, %{status: "RS_UNKNOWN_ERROR"})
         end
     else
+      {:error, :idempotent_case} ->
+        user = Users.get_user_by_name(username)
+        json(conn, %{
+          status: "RS_OK",
+          user: username,
+          balance: user.balance
+        })
       {:error, :invalid_user} ->
         json(conn, %{status: "RS_ERROR_INVALID_USER"})
 
@@ -72,7 +79,7 @@ defmodule Hub88WalletWeb.TransactionController do
   with {:ok, user} <- validate_user(username),
       :ok <- validate_currency(currency),
       :ok <- validate_balance(user, amount),
-      :ok <- validate_unique_transaction(transaction_uuid) do
+      :ok <- validate_unique_transaction(transaction_uuid, amount) do
 
       transaction_data = %{
         user_id: user.id,
@@ -95,6 +102,13 @@ defmodule Hub88WalletWeb.TransactionController do
             json(conn, %{status: "RS_UNKNOWN_ERROR"})
         end
     else
+      {:error, :idempotent_case} ->
+        user = Users.get_user_by_name(username)
+        json(conn, %{
+          status: "RS_OK",
+          user: username,
+          balance: user.balance
+        })
       {:error, :invalid_user} ->
         json(conn, %{status: "RS_ERROR_INVALID_USER"})
 
@@ -134,10 +148,13 @@ defmodule Hub88WalletWeb.TransactionController do
     end
   end
 
-  defp validate_unique_transaction(transaction_uuid) do
+  defp validate_unique_transaction(transaction_uuid, ammount_old) do
     case Transactions.get_transaction_by_uuid(transaction_uuid) do
       nil -> :ok
-      _transaction -> {:error, :duplicate_transaction}
+      transaction when transaction.amount == ammount_old ->
+        {:error, :closed_transaction}
+      _transaction ->
+        {:error, :idempotent_case}
     end
   end
 
